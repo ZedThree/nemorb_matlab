@@ -192,7 +192,8 @@ for i=1:length(ind) %Loop on simulations
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Graphs %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   if (graphs == 1)
     % Plot energy of toroidal modes
-    figure;
+    plotname = [sim(k).name ' - Growth rate'];
+    figure('Name',plotname);
     if nfilt1 == 0
       semilogy(time_ef,(efspecn(1,:)),'k--');
       hold on;
@@ -212,7 +213,7 @@ for i=1:length(ind) %Loop on simulations
     E=[Estart; Estop];
     plot(t,E,'r:x');
     
-    lplot2=1;
+    lplot2=0;
     if lplot2==1
       t_growth=[time_growth(time_avg_min), time_growth(time_avg_max)];
       gamma_temp=[gamma_avg(k), gamma_avg(k)];

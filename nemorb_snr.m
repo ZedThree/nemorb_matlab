@@ -35,10 +35,11 @@ for ii=1:length(ind)
   k=ind(ii);
   
   % If given output argument hh, plot figure in background
+  plotname = [sim(k).name ' - SNR'];
   if exist('hh')==1
-    h(k) = figure('Visible','off');
+    h(k) = figure('Visible','off','Name',plotname);
   else
-    h(k) = figure;
+    h(k) = figure('Name',plotname);
   end
 
   % Plot SNR

@@ -39,13 +39,6 @@ pwd_old = pwd;
 for ii=1:length(ind)
   k=ind(ii);
   
-  % If given output argument hh, plot figure in background
-  if exist('hh')==1
-    h(k) = figure('Visible','off');
-  else
-    h(k) = figure;
-  end
-
   % Check flux exists
   if isfield(sim(k).(species),flux)==0
     warning('nemorb:emptydata',['%s does not exist for species %s in simulation' ...
@@ -73,6 +66,18 @@ for ii=1:length(ind)
     sim(k).(species).s_prof1D   = sqrt(sim(k).(species).psi_prof1D);
   end
   
+  % Get name of flux
+  cd(sim(k).path);
+  fluxname = hdf5read(sim(k).filename,['/data/var1d/',species,'/', ...
+		    flux,'/title']);
+  plotname = [sim(k).name ' - ' fluxname.Data];
+  % If given output argument hh, plot figure in background
+  if exist('hh')==1
+    h(k) = figure('Visible','off','Name',plotname);
+  else
+    h(k) = figure('Name',plotname);
+  end
+
   % Plot heat flux
   pcolor(sim(k).(species).time_1D,sim(k).(species).s_prof1D, ...
        double(sim(k).(species).(flux)));
@@ -80,7 +85,7 @@ for ii=1:length(ind)
   colorbar
   ylabel('s')
   xlabel('Time [\Omega_{ci}]')
-  title([sim(k).name ' - ' flux])
+  title([sim(k).name ' - ' flux ' for ' species])
 end
 
 hh=h;
