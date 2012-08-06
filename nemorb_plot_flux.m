@@ -68,9 +68,14 @@ for ii=1:length(ind)
   
   % Get name of flux
   cd(sim(k).path);
-  fluxname = hdf5read(sim(k).filename,['/data/var1d/',species,'/', ...
+  try
+    fluxname = hdf5read(sim(k).filename,['/data/var1d/',species,'/', ...
 		    flux,'/title']);
-  plotname = [sim(k).name ' - ' fluxname.Data];
+    fluxname = fluxname.Data;
+  catch err
+    fluxname = flux;
+  end
+  plotname = [sim(k).name ' - ' fluxname];
   % If given output argument hh, plot figure in background
   if exist('hh')==1
     h(k) = figure('Visible','off','Name',plotname);
@@ -79,13 +84,12 @@ for ii=1:length(ind)
   end
 
   % Plot heat flux
-  pcolor(sim(k).(species).time_1D,sim(k).(species).s_prof1D, ...
-       double(sim(k).(species).(flux)));
+  pcolor(sim(k).(species).time_1D, sim(k).(species).s_prof1D, double(sim(k).(species).(flux)));
   shading interp;
   colorbar
   ylabel('s')
   xlabel('Time [\Omega_{ci}]')
-  title([sim(k).name ' - ' flux ' for ' species])
+  title([sim(k).name ' - ' flux ' for ' species],'Interpreter','none')
 end
 
 hh=h;

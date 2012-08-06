@@ -16,7 +16,7 @@ function [x_aspect delta_aspect ellipse_aspect ellipse_strut] = nemorb_mode_aspe
 %	ind      = array of simulation indices
 
 if exist('ind') == 0
-ind=1;
+  ind=1;
 end
 
 pwd_old=pwd;

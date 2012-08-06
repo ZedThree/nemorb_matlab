@@ -218,7 +218,7 @@ for jj=1:length(ind)
 	    xlabel(nemo_t(k).radlab)
 	    ylabel('n_i/<n_i>')
 	    legend('analytic','particles, initial','particles, final')
-	    title(strcat('Ion density profile, ',nemo_t(k).name))
+	    title([s0d,' density profile, ',nemo_t(k).name])
 	    %plot analytic and reconstructed logarithmic density gradient
 	    figure;
 	    hold on
@@ -238,7 +238,7 @@ for jj=1:length(ind)
 	    axis ([0 1 (-nemo_t(k).(s0d).kappan0)-1 max(nemo_t(k).(s0d).gradn_pic)+1]);
 	    xlabel(nemo_t(k).radlab)
 	    legend('analytic','particles, initial','particles, final')
-	    title(strcat('Ion density gradient profile, ',nemo_t(k).name))
+	    title([s0d,' density gradient profile, ',nemo_t(k).name])
 	  end
 
 	  if nemo_t(k).generic.nsel_equil == 2 & nemo_t(k).(s0d).nsel_profile > 1
@@ -255,7 +255,7 @@ for jj=1:length(ind)
 
 	  %%%%%%%%%%%%%%%%%%%%%%%%%%% ETAI IONS%%%%%%%%%%%%%%%%%%%%%
 	  nemo_t(k).(s0d).etai=nemo_t(k).(s0d).RoLT./nemo_t(k).(s0d).RoLn;
-	  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% CHI IONS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% THERMAL DIFFUSIVITY %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	  %initialize chi_perp
 	  nemo_t(k).(s0d).chi_perp=0*nemo_t(k).(s0d).efluxw_rad;
 	  if nemo_t(k).generic.nsel_equil == 2 & nemo_t(k).(s0d).nsel_profile > 1 & nemo_t(k).norm_Dimits==1
@@ -264,7 +264,7 @@ for jj=1:length(ind)
 	    nemo_t(k).(s0d).chi_perp=-nemo_t(k).(s0d).efluxw_rad(s1:end-s2,:)./(nemo_t(k).(s0d).f_av(s1:end-s2,:).*nemo_t(k).(s0d).dTds(:,:))*(nemo_t(k).generic.lx/2)^2;
 	  end
 
-	  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% D IONS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% PARTICLE DIFFUSIVITY  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	  %initialize D_perp
 	  nemo_t(k).(s0d).D_perp=0*nemo_t(k).(s0d).pfluxw_rad(s1:end-s2);
 	  if nemo_t(k).generic.nsel_equil == 2 & nemo_t(k).(s0d).nsel_profile > 1 & nemo_t(k).norm_Dimits==1
@@ -272,6 +272,21 @@ for jj=1:length(ind)
 		nemo_t(k).(s0d).dndrhooa(s1:end-2,:)*(nemo_t(k).generic.lx/2)^2/nemo_t(k).(s0d).kappan0;
 	  else
 	    nemo_t(k).(s0d).D_perp =-nemo_t(k).(s0d).pfluxw_rad(s1:end-s2,:)./nemo_t(k).(s0d).dnds(:,:)*(nemo_t(k).generic.lx/2)^2;
+	  end
+
+	  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% MOMENTUM DIFFUSIVITY %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	  % Calculate gradient of momentum
+	  disp(['Computing ', s0d, ' momentum gradient for ', nemo_t(k).name])
+ 	  nemo_t(k).(s0d).dPds = zeros(size(nemo_t(k).(s0d).vpltor_av0));
+	  for jj=1:n
+	    nemo_t(k).(s0d).dPds(:,jj) = get_deriv(nemo_t(k).(s0d).vpltor_av0(:,jj),nemo_t(k).(s0d).s_prof1D)./(nemo_t(k).generic.lx/2);
+	  end
+	  %initialize chi_phi
+	  nemo_t(k).(s0d).chi_phi=0*nemo_t(k).(s0d).vpfluxw_rad;
+	  if nemo_t(k).generic.nsel_equil == 2 & nemo_t(k).(s0d).nsel_profile > 1 & nemo_t(k).norm_Dimits==1
+	    nemo_t(k).(s0d).chi_phi=-nemo_t(k).(s0d).vpfluxw_rad(s1:end-s2,:)./(nemo_t(k).(s0d).f_av(s1:end-s2,:).*nemo_t(k).(s0d).dTdrhooa(:,:))*(nemo_t(k).generic.lx/2)^2/nemo_t(k).(s0d).kappan0;
+	  else
+	    nemo_t(k).(s0d).chi_phi=-nemo_t(k).(s0d).vpfluxw_rad(s1:end-s2,:)./(nemo_t(k).(s0d).f_av(s1:end-s2,:).*nemo_t(k).(s0d).dPds(:,:))*(nemo_t(k).generic.lx/2)^2;
 	  end
 
     end

@@ -1,4 +1,4 @@
-function [sim efspecn_rel] = nemorb_toroidal_spectrum(sim, info, species, spec_time, graphs, ind)
+function [sim efspecn_rel] = nemorb_energy_avg(sim, info, species, spec_time_start, spec_time_end, graphs, ind)
 %################################
 % sim = nemorb_toroidal_spectrum(sim,info, species, spec_time, graphs, ind)
 %################################
@@ -15,7 +15,8 @@ function [sim efspecn_rel] = nemorb_toroidal_spectrum(sim, info, species, spec_t
 % sim     = array containing the simulations data, created with loader.m
 % info    = array containing info from nemorb_load
 % species = name of species to plot growth rates for
-% time    = time to plot spectra for
+% start time    = start time to average over
+% end time = 
 % graphs  = [ 1 : 0 ] graphs on or off
 % ind     = array containing indexes of simulations for the output of this function
 %---------------
@@ -83,7 +84,8 @@ for i=1:length(ind) %Loop on simulations
   dt_ef=time_ef(2)-time_ef(1);
 
   % Find temporal index
-  it=find(time_ef <= spec_time,1,'last');
+  it1=find(time_ef <= spec_time_start,1,'last');
+  it2=find(time_ef <= spec_time_end,1,'last');
 
   for j=1:length(n) %Loop on toroidal modes
     nloc=n(j);
@@ -91,29 +93,32 @@ for i=1:length(ind) %Loop on simulations
     %Get efspec(nloc,:,:)= (m,t) components of toroidal mode nloc
     %warning in hdf5read_slice: dimensions in reverse order!!!
     efspec_data=strcat(efspec,'/data');
-    tmp=hdf5read_slice_new(sim(k).filename,efspec_data,[it-1 0 j-1],[1 mmodes 1]);
+    tmp=hdf5read_slice_new(sim(k).filename,efspec_data,[it1-1 0 j-1],[(it2-it1) mmodes 1]);
     %remove the 1st useless dimension
     tmp=squeeze(tmp);
+    tmp=mean(tmp,2);
     %tmp is a 2d array (m,t)
     %Sum over poloidal modes to get the total toroidal energy
-    efspecn(j)=sum(tmp,2);
+    size(tmp);
+    efspecn(j,:)=sum(tmp,1);
     leg{j}=strcat('n=',num2str(nloc));
 
   end %Loop on toroidal modes
-
-  % normalise to maximum value
+  
+  % normalise to maximum value, ignoring n=0.
   efspecn_rel=efspecn/max(efspecn(2:end));
+  top = 1.2*max(efspecn(2:end));
   sim(k).(species).n=n;
   sim(k).(species).energy_spectrum=efspecn;
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Graphs %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   if (graphs == 1)
     % Plot energy of toroidal modes
     figure;
-    plot(n,efspecn_rel);
+    plot(n,(efspecn));
     xlabel('n')
     ylabel('E (A.U.)')
-    ylim([0 1.2])
-    title(sprintf('Energy in toroidal modes for %s at %d',sim(k).name,spec_time))
+    ylim([0 top])
+    title(sprintf('Energy in toroidal modes for %s',sim(k).name))
   end
 
 end %loop on simulations

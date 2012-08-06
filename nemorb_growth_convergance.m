@@ -197,7 +197,9 @@ for i=1:length(ind) %Loop on simulations
     if nfilt1 == 0
       semilogy(time_ef,(efspecn(1,:)),'k--');
       hold on;
-      semilogy(time_ef,(efspecn(2:end,:)))
+      choose_n = [ 20 40 60 80];
+      semilogy(time_ef,(efspecn(choose_n,:)))
+%       semilogy(time_ef,(efspecn(2:end,:)))
     else
       semilogy(time_ef,efspecn(1:end,:))
       hold on;
@@ -205,13 +207,13 @@ for i=1:length(ind) %Loop on simulations
     xlabel(timelab{1})
     ylabel('E^{(n)} [m_ic_s^2]')
     title(sprintf('Energy in mode n=%d, gamma=%5.3f, for %s',n(n0),sim(k).gamma(n0),sim(k).name))
-    legend(leg,'Location','NorthEast')
+    %legend(leg,'Location','NorthEast')
     
-    semilogy(time_ef(xx:xy),exp(test_values),'g--')
+%     semilogy(time_ef(xx:xy),exp(test_values),'g--')
     
-    t=[sim(k).tmin sim(k).tmax];
-    E=[Estart; Estop];
-    plot(t,E,'r:x');
+%     t=[sim(k).tmin sim(k).tmax];
+%     E=[Estart; Estop];
+%     plot(t,E,'r:x');
     
     lplot2=0;
     if lplot2==1

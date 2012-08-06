@@ -31,10 +31,10 @@ for i=1:length(ind) % Loop on simulations
 k = ind(i);
 cd(sim(k).path);
 
-background_efield_size = nemorb_genericornot(sim(k),info(k),'background_efield_size');
-if background_efield_size == 0.0
-continue
-end
+% background_efield_size = nemorb_genericornot(sim(k),info(k),'background_efield_size');
+% if background_efield_size == 0.0
+% continue
+% end
 
 % Make things a bit easier
 jdote_bg_tot  = sim(k).(species).jdote_bg_tot;

@@ -194,7 +194,8 @@ for kk=1:length(info(jj).GroupHierarchy.Groups(ipara).Groups)
     varvalue=hdf5read(filename,pathname);
     pathl=length(pathname);
     %remove '/parameters/species-name/' from the pathname
-    listpara{ii}=pathname(dirnamel+1:pathl);
+    %also remove leading and trailing whitespace
+    listpara{ii}=strtrim(pathname(dirnamel+1:pathl));
     %check if variable already exists
     if exist(listpara{ii})==1
       sprintf('%s','ERROR: ', speciesname(kk).(listpara{ii}),' already exists')

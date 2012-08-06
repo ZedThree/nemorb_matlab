@@ -1,6 +1,6 @@
-function [hh] = nemorb_snr(sim, ind)
+function [hh] = nemorb_snr(sim, species, ind)
 %################################
-% [hh] = nemorb_snr(sim, ind)
+% [hh] = nemorb_snr(sim, species, ind)
 %################################
 %---------------
 %
@@ -43,10 +43,10 @@ for ii=1:length(ind)
   end
 
   % Plot SNR
-  plot(sim(k).time, sim(k).generic.signal./sim(k).generic.noise)
+  plot(sim(k).time, sim(k).(species).signal./sim(k).(species).noise)
   hold on
-  plot(sim(k).time, sim(k).generic.signal_nonzonal./ ...
-       sim(k).generic.noise,'--r')
+  plot(sim(k).time, sim(k).(species).signal_nonzonal./ ...
+       sim(k).(species).noise,'--r')
   plot([sim(k).time(1) sim(k).time(end)],[10 10],':k')
   ylabel('SNR')
   xlabel('Time [\Omega_{ci}]')
